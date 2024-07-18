@@ -1,31 +1,29 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-# For more information, please see https://aka.ms/containercompat
-
+# Use the appropriate base image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-# Use Linux-based SDK image for building
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use the SDK image for building the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# COPY csproj and restore as distinct layers
-COPY ["CodePulse.API.csproj", "CodePulse.API/"]
-RUN dotnet restore "./CodePulse.API/CodePulse.API.csproj"
+# Copy the csproj file and restore dependencies
+COPY ["CodePulse.API/CodePulse.API.csproj", "CodePulse.API/"]
+RUN dotnet restore "CodePulse.API/CodePulse.API.csproj"
 
-# Copy everything else and build
+# Copy the remaining source code and build the application
 COPY . .
 WORKDIR "/src/CodePulse.API"
-RUN dotnet build "./CodePulse.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "CodePulse.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# Publish the application
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./CodePulse.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "CodePulse.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Final stage: use the runtime image
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
