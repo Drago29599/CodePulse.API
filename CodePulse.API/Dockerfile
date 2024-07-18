@@ -10,8 +10,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy the csproj file and restore dependencies
-COPY ["CodePulse.API/CodePulse.API.csproj", "CodePulse.API/"]
-RUN dotnet restore "CodePulse.API/CodePulse.API.csproj"
+COPY ["CodePulse.API.csproj", "CodePulse.API/"]
+RUN dotnet restore "CodePulse.API.csproj"
 
 # Copy the remaining source code and build the application
 COPY . .
