@@ -10,6 +10,7 @@
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <UserSecretsId>fc4699b7-15ef-42b8-929b-928a857eff71</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+	  <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
