@@ -12,10 +12,10 @@
 	ARG BUILD_CONFIGURATION=Release
 	WORKDIR /src
 	COPY ["CodePulse.API.csproj", "CodePulse.API/"]
-	USER ContainerUser
 	RUN dotnet restore "./CodePulse.API.csproj"
 	COPY . .
 	WORKDIR "/src/CodePulse.API"
+	USER ContainerAdministrator
 	RUN dotnet build "./CodePulse.API.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 	FROM build AS publish
