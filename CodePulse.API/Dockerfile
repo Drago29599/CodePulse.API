@@ -15,7 +15,7 @@ WORKDIR /src
 
 # COPY csproj and restore as distinct layers
 COPY ["CodePulse.API.csproj", "CodePulse.API/"]
-RUN dotnet restore "./CodePulse.API/CodePulse.API.csproj"
+RUN dotnet restore "./CodePulse.API.csproj"
 
 # Copy everything else and build
 COPY . .
