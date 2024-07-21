@@ -17,6 +17,8 @@ namespace CodePulse.API.Controllers
             this.blogPostRepository = blogPostRepository;
             this.categoryRepository = categoryRepository;
         }
+
+        //Summary
         [HttpPost]
         public async Task<IActionResult> AddblogPost([FromBody] AddBlogPostReqDto model)
         {
