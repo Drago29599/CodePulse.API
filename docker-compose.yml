@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  codepulse.api:
+    image: drago29/codepulseapi  # Use your Docker Hub repository and image name
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__CodePulseConnectionString=workstation id=CodePulseDB.mssql.somee.com;packet size=4096;user id=Drago29_SQLLogin_1;pwd=5b6r7dne2r;data source=CodePulseDB.mssql.somee.com;persist security info=False;initial catalog=CodePulseDB;TrustServerCertificate=True
+    ports:
+      - "8080:8080"

@@ -9,8 +9,9 @@
     <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809</ContainerBaseImage>
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <UserSecretsId>fc4699b7-15ef-42b8-929b-928a857eff71</UserSecretsId>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	  <OutputType>Exe</OutputType>
+	  <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>

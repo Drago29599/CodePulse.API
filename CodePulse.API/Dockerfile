@@ -1,27 +1,39 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
+# Stage 1: Build and publish the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["CodePulse.API.csproj", "CodePulse.API/"]
+
+# Copy csproj and restore as distinct layers
+COPY ["CodePulse.API/CodePulse.API.csproj", "CodePulse.API/"]
 RUN dotnet restore "./CodePulse.API/CodePulse.API.csproj"
+
+# Copy everything else and build
 COPY . .
+
 WORKDIR "/src/CodePulse.API"
-RUN dotnet build "./CodePulse.API.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "./CodePulse.API.csproj" -c Release -o /app/build
 
+# Stage 2: Publish the application
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./CodePulse.API.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./CodePulse.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM base AS final
+# Stage 3: Create the runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
+# Copy published output from build stage
 COPY --from=publish /app/publish .
+
+# Copy appsettings.json into the Docker image
+COPY CodePulse.API/appsettings.json ./
+
+# Define environment variable for ASP.NET Core environment
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+# Define environment variable for the connection string
+ENV ConnectionStrings__CodePulseConnectionString="workstation id=CodePulseDB.mssql.somee.com;packet size=4096;user id=Drago29_SQLLogin_1;pwd=5b6r7dne2r;data source=CodePulseDB.mssql.somee.com;persist security info=False;initial catalog=CodePulseDB;TrustServerCertificate=True"
+
+# Expose port 8080 for HTTP traffic (adjust as needed)
+EXPOSE 8080
+
+# Set the entry point for the application
 ENTRYPOINT ["dotnet", "CodePulse.API.dll"]
