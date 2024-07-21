@@ -25,7 +25,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: ./CodePulse.API
-          file: ./CodePulse.API/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: drago29/codepulseapi:latest  # Adjust the tag to match your existing Docker image
