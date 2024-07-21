@@ -13,6 +13,10 @@ namespace CodePulse.API.Controllers
     {
         private readonly AppDbContext context;
         private readonly ICategoryRepository categoryRepository;
+        private static readonly string[] Summaries = new[]
+        {
+            "Categories", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
 
         public CategoriesController(AppDbContext context, ICategoryRepository categoryRepository)
         {
@@ -48,24 +52,31 @@ namespace CodePulse.API.Controllers
 
         //Get: api/categories
         [HttpGet]
-        public async Task<IActionResult> GetCaegories()
+        public IEnumerable<WeatherForecast> GetCaegories()
         {
-            var categories = await categoryRepository.GetCategoriesAsync();
+            //var categories = await categoryRepository.GetCategoriesAsync();
 
-            var response = new List<CategoryDto>();
+            //var response = new List<CategoryDto>();
 
-            //Map domain model to dto
-            foreach (var category in categories)
+            ////Map domain model to dto
+            //foreach (var category in categories)
+            //{
+            //    response.Add(new CategoryDto
+            //    {
+            //        Name = category.Name,
+            //        UrlHandle = category.UrlHandle,
+            //        Id = category.Id
+            //    }
+            //    );
+            //}
+            //return Ok(response);
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
-                response.Add(new CategoryDto
-                {
-                    Name = category.Name,
-                    UrlHandle = category.UrlHandle,
-                    Id = category.Id
-                }
-                );
-            }
-            return Ok(response);
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
         }
 
         //Get: https://localhost:7112/api/Categories/{id}
